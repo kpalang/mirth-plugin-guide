@@ -7,6 +7,8 @@ This is an unofficial collection of tips and tricks on the topic of Mirth Connec
 ## Foreword
 If you, the reader, have any suggestions, questions, or anything at all you'd like to add, please either create a pull-request or an Issue and I'll look into it.
 
+Also I'm going to be use _**Mirth**_ to refer to [this product](https://github.com/nextgenhealthcare/connect/), regardless of how it is oficially named at the time.
+
 Now let's get on to it.
 
 ---
@@ -32,4 +34,10 @@ Another good idea is to clone my [Mirth sample plugin](https://github.com/kpalan
 
 ## 1 - Getting started
 
+
 ---
+
+## #? - Signing and publishing
+Mirth Connect plugins need to be signed with a code-signing certificate. This certificate can be either self-signed or bought from a proper certificate authority. There have been some debate over which certificate authorities are trusted by Mirth. I've had success with [DigiCert](https://www.digicert.com/).
+
+We are going to use a self-signed certificate to sign our plugin because official certificates cost a couple hundred dollars. But fret not, for a self-signed works for our current purpose of getting the plugin running on Mirth.
