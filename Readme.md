@@ -50,7 +50,7 @@ _To be fleshed out_
 ---
 
 ## Requirements
-- Java JDK - I suggest version 1.8 because the UI part of Mirth uses that. I'm going to use a [Temurin build](https://adoptium.net/index.html?variant=openjdk8&jvmVariant=hotspot). You can get installation instructions for your OS version at the bottom of that page.
+- Java JDK - I suggest version 1.8 because the UI part of Mirth uses that. I'm going to use a [Temurin build](https://adoptium.net/index.html?variant=openjdk8&jvmVariant=hotspot). You can get installation instructions for your OS version at the bottom of that page. Since I'm using Linux I'm going to install that from my package manager.
 - Maven - You can download a version of Maven [here](https://maven.apache.org/index.html). I'm going to use version 3.8.3.
 
 We will also be using another neat tool of mine, a [mirth-plugin-maven-plugin](https://github.com/kpalang/mirth-plugin-maven-plugin), which will save us some manual work later on. You don't have to do anything with it right now.
@@ -60,7 +60,7 @@ We will also be using another neat tool of mine, a [mirth-plugin-maven-plugin](h
 ## 0 - Preparation
 A fair first place would be to clone yourself a copy of [Mirth Connect](https://github.com/nextgenhealthcare/connect/). That way you can take a look at the structure and inheritance of Mirth classes.
 
-So... `git clone git@github.com:nextgenhealthcare/connect.git`. Now open the resulting folder up in you favourite IDE. I'm going to use [IntelliJ](https://www.jetbrains.com/idea/) cause I like that one.
+So... `git clone git@github.com:nextgenhealthcare/connect.git`. Now open the resulting folder up in your favourite IDE. I'm going to use [IntelliJ](https://www.jetbrains.com/idea/) cause I like that one.
 
 -Here will be a quick look around the structure-
 
