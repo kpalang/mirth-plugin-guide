@@ -7,7 +7,7 @@ This is an unofficial collection of tips and tricks on the topic of Mirth Connec
 ## Foreword
 If you, the reader, have any suggestions, questions, or anything at all you'd like to add, please either create a pull-request or an Issue and I'll look into it.
 
-Also I'm going to be use _**Mirth**_ to refer to [this product](https://github.com/nextgenhealthcare/connect/), regardless of how it is oficially named at the time.
+Also I'm going to be use _**Mirth**_ to refer to [this product](https://github.com/nextgenhealthcare/connect/), regardless of how it is officially named at the time.
 
 ---
 
