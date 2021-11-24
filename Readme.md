@@ -24,7 +24,7 @@ We will also be using another neat tool of mine, a [mirth-plugin-maven-plugin](h
 ## 0 - Preparation
 A fair first place would be to clone yourself a copy of [Mirth Connect](https://github.com/nextgenhealthcare/connect/). That way you can take a look at the structure and inheritance of Mirth classes.
 
-So... `git@github.com:nextgenhealthcare/connect.git`. Now open that up in you favourite IDE. I'm going to use [IntelliJ](https://www.jetbrains.com/idea/) cause I like that one.
+So... `git clone git@github.com:nextgenhealthcare/connect.git`. Now open the resulting folder up in you favourite IDE. I'm going to use [IntelliJ](https://www.jetbrains.com/idea/) cause I like that one.
 
 -Here will be a quick look around the structure-
 
