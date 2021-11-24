@@ -4,6 +4,13 @@ This is an unofficial collection of tips and tricks on the topic of Mirth Connec
 
 ---
 
+## Foreword
+If you, the reader, have any suggestions, questions, or anything at all you'd like to add, please either create a pull-request or an Issue and I'll look into it.
+
+Now let's get on to it.
+
+---
+
 ## Requirements
 - Java JDK - I suggest version 1.8 because the UI part of Mirth uses that. I'm going to use a [Temurin build](https://adoptium.net/index.html?variant=openjdk8&jvmVariant=hotspot). You can get installation instructions for your OS version at the bottom of that page.
 - Maven - You can download a version of Maven [here](https://maven.apache.org/index.html). I'm going to use version 3.8.4.
@@ -24,3 +31,5 @@ Another good idea is to clone my [Mirth sample plugin](https://github.com/kpalan
 ---
 
 ## 1 - Getting started
+
+---
