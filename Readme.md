@@ -51,7 +51,7 @@ _To be fleshed out_
 
 ## Requirements
 - Java JDK - I suggest version 1.8 because the UI part of Mirth uses that. I'm going to use a [Temurin build](https://adoptium.net/index.html?variant=openjdk8&jvmVariant=hotspot). You can get installation instructions for your OS version at the bottom of that page.
-- Maven - You can download a version of Maven [here](https://maven.apache.org/index.html). I'm going to use version 3.8.4.
+- Maven - You can download a version of Maven [here](https://maven.apache.org/index.html). I'm going to use version 3.8.3.
 
 We will also be using another neat tool of mine, a [mirth-plugin-maven-plugin](https://github.com/kpalang/mirth-plugin-maven-plugin), which will save us some manual work later on. You don't have to do anything with it right now.
 
@@ -128,6 +128,65 @@ You will also see a `pom.xml` file in your project root. This is our Maven proje
     <plugin.archive.name>sampleplugin</plugin.archive.name>
 </properties>
 ```
+
+--Kaur, don't forget to put a picture here :)
+
+
+```xml
+<!--
+This bit specifies a Nexus repository I'm
+hosting for Mirth jarfiles so we don't have
+to manually extract them from Mirth itself.
+-->
+<repositories>
+    <repository>
+        <id>nexus</id>
+        <url>https://nexus.kaurpalang.com/repository/maven-public/</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    <!-- Helper plugin to handle Mirth plugin specific tasks. -->
+    <dependency>
+        <groupId>com.kaurpalang</groupId>
+        <artifactId>mirth-plugin-maven-plugin</artifactId>
+        <version>${mirth-plugin-maven-plugin.version}</version>
+    </dependency>
+</dependencies>
+```
+
+The last thing we'll cover is the following. This bit makes sure our plugin get signed and sets the required parameters.
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-jarsigner-plugin</artifactId>
+    <version>${maven-jarsigner-plugin.version}</version>
+    <executions>
+        <execution>
+            <id>sign</id>
+            <goals>
+                <goal>sign</goal>
+            </goals>
+        </execution>
+    </executions>
+    <configuration>
+        <!-- Path to our keystore -->
+        <keystore>${project.parent.basedir}/certificate/keystore.jks</keystore>
+        <!-- The name of our certificate -->
+        <alias>selfsigned</alias>
+        <!-- Password to access the keystore -->
+        <storepass>storepass</storepass>
+        <!-- Password for the certificate -->
+        <keypass>keypass</keypass>
+    </configuration>
+</plugin>
+```
+
+You don't have to touch anything else for now.
+
+Now let's run `mvn clean package` to make sure our plugin builds properly. You should see `distribution/target/sampleplugin.zip` pop up. Take a peek inside to get an idea of what the archive will look like. I'm not going to cover it here.
+
+
 
 ---
 
