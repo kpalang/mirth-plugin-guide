@@ -60,11 +60,11 @@ We will also be using another neat tool of mine, a [mirth-plugin-maven-plugin](h
 ## 0 - Preparation
 A fair first place would be to clone yourself a copy of [Mirth Connect](https://github.com/nextgenhealthcare/connect/). That way you can take a look at the structure and inheritance of Mirth classes.
 
-So... `git clone git@github.com:nextgenhealthcare/connect.git`. Now open the resulting folder up in your favourite IDE. I'm going to use [IntelliJ](https://www.jetbrains.com/idea/) cause I like that one.
-
--Here will be a quick look around the structure-
+So... `git clone git@github.com:nextgenhealthcare/connect.git`. Now open the resulting folder up in your favorite IDE. I'm going to use [IntelliJ](https://www.jetbrains.com/idea/) cause I like that one.
 
 Another good idea is to clone my [Mirth sample plugin](https://github.com/kpalang/mirth-sample-plugin) to get a general idea of the plugin file tree. Also we will be using Maven to build the project, so that's something to look up if you haven't already.
+
+And finally I've made a [Docker image](https://hub.docker.com/r/kpalang/connect/) that includes a JVM option that enables remote debugging. This will come handy needed later, but now I'm going to set up a Docker container. The container will be useful for quick runs to check if the plugin works or not. It's also all sandboxed so you pretty much need one command to run it and another one to stop it. I've included a sample [docker-compose.yaml](/docker-compose.yaml).
 
 ---
 
