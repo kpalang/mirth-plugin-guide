@@ -77,7 +77,7 @@ The sample plugin structure consists of four main parts:
 1. server
 1. shared
 
-Client module (as in Maven lingo) will get all the code that as to do with the UI. Distribution module is not actually related to the functionality of our plugin, but is actually needed to make our life packaging that plugin a tad easier. Server module get all the backend bits of our code. And finally, shared module gets all those bits that are needed on boths sides of our plugin, UI and backend.
+Client module (as in Maven lingo) will get all the code that as to do with the UI. Distribution module is not actually related to the functionality of our plugin, but is actually needed to make our life packaging that plugin a tad easier. Server module get all the backend bits of our code. And finally, shared module gets all those bits that are needed on both sides of our plugin, UI and backend.
 
 Additionally, you will find a `certificate` folder, which contains a readymade self-signed certificate that will sign our plugin in the name of BigCompany located in Big City, and a `libs` folder. Now `libs` folder will contain the libraries we want to include in our project separated by times. Anything we want to use at compiletime will go into `libs/compiletime`, and anything we need at runtime, when our plugin is running already, will go into `libs/runtime`.
 
