@@ -185,10 +185,86 @@ You don't have to touch anything else for now.
 
 Now let's run `mvn clean package` to make sure our plugin builds properly. You should see `distribution/target/sampleplugin.zip` pop up. Take a peek inside to get an idea of what the archive will look like. I'm not going to cover it here.
 
-After all this initial tweaking I've come to a state as in [this commit](https://github.com/kpalang/mirth-sample-plugin/tree/e5be66af4e9a8d879b71145289bf5b109db9987b).</br> **NOTE:** Your current state may differ a bit depending on when you clone the repository.
+After all this initial tweaking I've come to a state as in [this commit](https://github.com/kpalang/mirth-sample-plugin/tree/d3b36ea63a893332f6e0eda5283d88f00e8dc25c) (_I modified some other stuff aswell but that's unimportant right now..._).</br> **NOTE:** Your current state may differ a bit depending on when you clone the repository.
 
 ---
 
+## 2 - Writing serverside code
+
+The easiest way to get that _ofmygoditworks_ kick is to go into `server` module and edit `MyServicePlugin.java`.
+
+```java
+package com.kaurpalang.mirthpluginsample.server;
+
+import com.kaurpalang.mirth.annotationsplugin.annotation.ServerClass;
+import com.kaurpalang.mirthpluginsample.shared.Constants;
+import com.mirth.connect.model.ExtensionPermission;
+import com.mirth.connect.plugins.ServicePlugin;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+@ServerClass
+public class MyServicePlugin implements ServicePlugin {
+
+    @Override
+    public void init(Properties properties) {
+        System.out.println("Hello world from init!");
+    }
+
+    @Override
+    public void update(Properties properties) {
+        // We don't need to do anything here.
+    }
+
+    @Override
+    public Properties getDefaultProperties() {
+        return new Properties();
+    }
+
+    @Override
+    public ExtensionPermission[] getExtensionPermissions() {
+        return new ExtensionPermission[0];
+    }
+
+    @Override
+    public Map<String, Object> getObjectsForSwaggerExamples() {
+        return new HashMap<>();
+    }
+
+    @Override
+    public String getPluginPointName() {
+        return Constants.PLUGIN_POINTNAME;
+    }
+
+    @Override
+    public void start() {
+        System.out.println("Hello world from start!");
+    }
+
+    @Override
+    public void stop() {
+        System.out.println("Good bye world!");
+    }
+}
+```
+You'll notice in the function `getPluginPointName()`, I've referenced a `Constants` class from the `shared` module. This is so we can reference the same... _constants_, in both server- and client-side code.
+
+After editing the strings in this class, build the plugin with `mvn clean package`, install the plugin, the zip file will be in `distribution/target/` on your server and restart said server.</br>
+If you used the container from above, your logs should look something like this:
+```
+Found 1 custom extensions.
+Listening for transport dt_socket at address: 5005
+Hello world from init!
+Hello world from start!
+INFO  2021-11-26 12:54:09,496 [Main Server Thread] com.mirth.connect.server.Mirth: Mirth Connect 3.12.0 (Built on September 2, 2021) server successfully started.
+INFO  2021-11-26 12:54:09,498 [Main Server Thread] com.mirth.connect.server.Mirth: This product was developed by NextGen Healthcare (https://www.nextgen.com) and its contributors (c)2005-2021.
+INFO  2021-11-26 12:54:09,498 [Main Server Thread] com.mirth.connect.server.Mirth: Running Eclipse OpenJ9 VM 11.0.12 on Linux (5.4.0-90-generic, amd64), postgres, with charset UTF-8.
+INFO  2021-11-26 12:54:09,499 [Main Server Thread] com.mirth.connect.server.Mirth: Web server running at http://10.10.1.3:8080/ and https://10.10.1.3:8443/
+```
+
+![Hackerman gif](/images/hackerman.gif)
 
 ---
 
