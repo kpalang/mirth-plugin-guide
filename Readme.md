@@ -129,8 +129,7 @@ You will also see a `pom.xml` file in your project root. This is our Maven proje
 </properties>
 ```
 
---Kaur, don't forget to put a picture here :)
-
+![Details in Mirth Administrator](images/admin_plugin_details.png)
 
 ```xml
 <!--
