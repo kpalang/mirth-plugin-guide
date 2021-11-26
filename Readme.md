@@ -185,6 +185,9 @@ You don't have to touch anything else for now.
 
 Now let's run `mvn clean package` to make sure our plugin builds properly. You should see `distribution/target/sampleplugin.zip` pop up. Take a peek inside to get an idea of what the archive will look like. I'm not going to cover it here.
 
+After all this initial tweaking I've come to a state as in [this commit](https://github.com/kpalang/mirth-sample-plugin/tree/e5be66af4e9a8d879b71145289bf5b109db9987b).</br> **NOTE:** Your current state may differ a bit depending on when you clone the repository.
+
+---
 
 
 ---
