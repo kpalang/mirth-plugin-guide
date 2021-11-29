@@ -15,7 +15,7 @@ services:
       - VMOPTIONS=-Xmx512m
       - XDG_CONFIG_HOME=/opt/connect/
     networks:
-      - private
+      - mirth-network
     ports:
       - 8080:8080/tcp
       - 8443:8443/tcp
@@ -29,13 +29,17 @@ services:
 
   db:
     image: postgres:14.1-alpine
-    environment:
-      - POSTGRES_USER=mirthdb
-      - POSTGRES_PASSWORD=mirthdb
-      - POSTGRES_DB=mirthdb
-    expose:
+    networks:
+      - mirth-network
+    ports:
       - 5432
+    environment:
+      - POSTGRES_USER=mirthuser
+      - POSTGRES_PASSWORD=mirthuserpw
+      - POSTGRES_DB=mirthconnect
+    volumes:
+      - ${PWD}/pgdata:/var/lib/postgresql/data
 
 networks:
-  private:
-    external: true
+  mirth-network:
+    external: false
