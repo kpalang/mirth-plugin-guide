@@ -24,7 +24,7 @@ Mirth repository consists of eight sub-projects:
 - webadmin
 
 ### Client
-The client subproject contains the code for, you guessed it, the Mirth Administrator. That includes the code for the bare UI itself, aswell as code for different connectors and other plugins. the authors of Mirth are clever in the sense that they make all their official additions in the form of plugins, so plugin interfaces are kept up to date.
+The client subproject contains the code for, you guessed it, the Mirth Administrator. That includes the code for the bare UI itself, aswell as code for different connectors and other plugins. The authors of Mirth are clever in the sense that they make all their official additions in the form of plugins, so plugin interfaces are kept up to date.
 
 ### Command
 This subproject contains code for the commandline interface, or CLI. As you can see there's not much there.
@@ -64,7 +64,7 @@ So... `git clone git@github.com:nextgenhealthcare/connect.git`. Now open the res
 
 Another good idea is to clone my [Mirth sample plugin](https://github.com/kpalang/mirth-sample-plugin) to get a general idea of the plugin file tree. Also we will be using Maven to build the project, so that's something to look up if you haven't already.
 
-And finally I've made a [Docker image](https://hub.docker.com/r/kpalang/connect/) that includes a JVM option that enables remote debugging. This will come handy needed later, but now I'm going to set up a Docker container. The container will be useful for quick runs to check if the plugin works or not. It's also all sandboxed so you pretty much need one command to run it and another one to stop it. I've included a sample [docker-compose.yaml](/docker-compose.yaml).
+And finally I've made a [Docker image](https://hub.docker.com/r/kpalang/connect/) that includes a JVM option that enables remote debugging. This will come handy later, but now I'm going to set up a Docker container. The container will be useful for quick runs to check if the plugin works or not. It's also all sandboxed so you pretty much need one command to run it and another one to stop it. I've included a sample [docker-compose.yaml](/docker-compose.yaml).
 
 ---
 
@@ -263,6 +263,7 @@ INFO  2021-11-26 12:54:09,498 [Main Server Thread] com.mirth.connect.server.Mirt
 INFO  2021-11-26 12:54:09,498 [Main Server Thread] com.mirth.connect.server.Mirth: Running Eclipse OpenJ9 VM 11.0.12 on Linux (5.4.0-90-generic, amd64), postgres, with charset UTF-8.
 INFO  2021-11-26 12:54:09,499 [Main Server Thread] com.mirth.connect.server.Mirth: Web server running at http://10.10.1.3:8080/ and https://10.10.1.3:8443/
 ```
+...
 
 ![Hackerman gif](/images/hackerman.gif)
 
