@@ -269,6 +269,213 @@ INFO  2021-11-26 12:54:09,499 [Main Server Thread] com.mirth.connect.server.Mirt
 
 ---
 
+## 3 - Preparing for communcations with UI (aka REST API)
+
+_Note. [I refactored `Constants` to `MyConstants`](https://github.com/kpalang/mirth-sample-plugin/commit/568ef245a204dae3ffa1ae23efa9c862073d555e) to get more clarity between this and the one in mirth-plugin-maven-plugin._
+
+Right, now that you've got your hacking gloves on, lets start making our plugin controllable by adding API endpoints.
+
+First we need an object to transfer. We _could_ use just a String, but that way we won't see the automatic serialisation of POJOs. I chose to create a `MyInfoObject.java` class. This class has to go into the `shared` module, because that object has to be available to both server and client parts of our plugin. I also chose to place it in `com.kaurpalang.mirthpluginsample.shared.model` package, just to make the codebase more readable.
+
+So, the POJO:
+```Java
+package com.kaurpalang.mirthpluginsample.shared.model;
+
+public class MyInfoObject {
+    private String data;
+
+    public MyInfoObject(String data) {
+        this.data = data;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
+}
+```
+
+Ooor... _hint, hint..._ [lombok](https://projectlombok.org/)
+```java
+package com.kaurpalang.mirthpluginsample.shared.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@AllArgsConstructor
+public class MyInfoObject {
+    @Getter @Setter private String data;
+}
+```
+
+Mirth's API mechanic comprises mostly of two parts. A serverside servlet class and a shared servlet interface class. The servlet class is the one actually doing the work, therefore it has to run on the server. Servelet interface on the other hand has to be shared because the client will call servlet interface classes directly. This wasy we can also utilize XStream for pojo (de-)serialization.
+
+```java
+package com.kaurpalang.mirthpluginsample.shared.interfaces;
+
+import com.kaurpalang.mirth.annotationsplugin.annotation.ApiProvider;
+import com.kaurpalang.mirth.annotationsplugin.type.ApiProviderType;
+import com.kaurpalang.mirthpluginsample.shared.MyPermissions;
+import com.kaurpalang.mirthpluginsample.shared.model.MyInfoObject;
+import com.mirth.connect.client.core.ClientException;
+import com.mirth.connect.client.core.Operation;
+import com.mirth.connect.client.core.api.BaseServletInterface;
+import com.mirth.connect.client.core.api.MirthOperation;
+import com.mirth.connect.client.core.api.Param;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+
+@Path("/myplugin")
+@Tag(name = "MyPlugin operations")
+@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+@ApiProvider(type = ApiProviderType.SERVLET_INTERFACE)
+public interface MyServletInterface extends BaseServletInterface {
+
+    @GET
+    @Path("/getsomething")
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @ApiResponse(responseCode = "200", description = "Found the information",
+            content = {
+                    @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = MyInfoObject.class)),
+                    @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = MyInfoObject.class))
+            })
+    @MirthOperation(
+            name = "getSomething",
+            display = "Get important information",
+            permission = MyPermissions.GETSTH,
+            type = Operation.ExecuteType.ASYNC
+    )
+    MyInfoObject getSomething(
+            @Param("identifier") @Parameter(description = "The identifier of our important information to retrieve.", required = true) @QueryParam("identifier") String identifier)
+            throws ClientException;
+}
+```
+
+Lets go over this one-by-one:
+
+#### Swagger stuff
+
+`@Path("/myplugin")`</br>
+This annotation sets parent path of our endpoints:</br>
+`https://localhost:8443/api/myplugin/`
+
+--</br>
+`@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })`</br>
+This annotation tells Swagger our endpoint can consume either XML or JSON inputs</br>
+
+--</br>
+`@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })`</br>
+This one tells Swagger out endpoint produces either XML or JSON</br>
+
+#### Not Swagger stuff
+
+`@ApiProvider(type = ApiProviderType.SERVLET_INTERFACE)`</br>
+This line tells mirth-plugin-maven-plugin to include this class in our plugin's `plugin.xml` as the following line, which in turn tells Mirth to handle our class as a servlet interface.</br>
+```xml
+<apiProvider name="com.kaurpalang.mirthpluginsample.shared.interfaces.MyServletInterface" type="SERVLET_INTERFACE"/>
+```
+--</br>
+`public interface MyServletInterface extends BaseServletInterface`</br>
+BaseServletInterface is Mirth's BaseServletInterface... interface... It creates a foundation to base our servlet interfaces on...
+
+--</br>
+More Swagger stuff we touched just above
+
+--</br>
+```java
+@ApiResponse(
+  responseCode = "200",
+  description = "Found the information",
+  content = {
+          @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = MyInfoObject.class)),
+          @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = MyInfoObject.class))
+})
+```
+This part tells Swagger to use our POJO class as on output example. Also, automagic serialization ;) I'll show you the picture in a second.
+
+--</br>
+```java
+@MirthOperation(
+    name = "getSomething",
+    display = "Get important information",
+    permission = MyPermissions.GETSTH
+)
+```
+This annotation dictates first, who can execute it. TBH I don't really know right now what the permission parameter does, but I'd guess it allows for permission control if you've got the premium User Roles plugin installed.
+Also you can see I've put the permission string into [it's own class](https://github.com/kpalang/mirth-sample-plugin/blob/main/shared/src/main/java/com/kaurpalang/mirthpluginsample/shared/MyPermissions.java).</br>
+And secondly, this creates event messages in Events view in Mirth Administrator.
+
+![Events view with our custom event](/images/admin_event.png)
+
+--</br>
+```java
+MyInfoObject getSomething(
+            @Param("identifier") @Parameter(description = "The identifier of our important information to retrieve.", required = true) @QueryParam("identifier") String identifier)
+            throws ClientException;
+```
+Finally the function itself. Geez. Well it specifies what does in and what comes out of our function...
+
+#### Grand middle finale
+If you've done everything more or less like I've done above, you should see something like this:
+![Swagger view](/images/swagger_endpoint_look.png)
+
+I know right...
+
+<img src="/images/satisfying.jpg" alt="Satisfying" width="150"/>
+</br>
+</br>
+</br>
+
+Okay now, stop rubbing yourself. We've still got to implement the interface.
+```java
+package com.kaurpalang.mirthpluginsample.server.servlet;
+
+import com.kaurpalang.mirth.annotationsplugin.annotation.ApiProvider;
+import com.kaurpalang.mirth.annotationsplugin.type.ApiProviderType;
+import com.kaurpalang.mirthpluginsample.shared.MyConstants;
+import com.kaurpalang.mirthpluginsample.shared.interfaces.MyServletInterface;
+import com.kaurpalang.mirthpluginsample.shared.model.MyInfoObject;
+import com.mirth.connect.server.api.MirthServlet;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.SecurityContext;
+
+@ApiProvider(type = ApiProviderType.SERVER_CLASS)
+public class MyPluginServlet extends MirthServlet implements MyServletInterface {
+
+    public MyPluginServlet(@Context HttpServletRequest request, @Context SecurityContext sc) {
+        super(request, sc, MyConstants.PLUGIN_POINTNAME);
+    }
+
+    @Override
+    public MyInfoObject getSomething(String identifier) {
+        String data = String.format("<%s> Some important informations", identifier);
+        return new MyInfoObject(data);
+    }
+}
+```
+To be honest, only the `@ApiProvider` annotation deserves attention here. Notice the type is now `ApiProviderType.SERVER_CLASS`, as opposed to `ApiProviderType.SERVLET_INTERFACE` in `MyServletInterface`. It tells mirth-plugin-maven-plugin to put this line in our plugin definition file which tells Mirth this class is a Servlet class and that it should process this:
+```XML
+<apiProvider name="com.kaurpalang.mirthpluginsample.server.servlet.MyPluginServlet" type="SERVER_CLASS"/>
+```
+
+Right. Now you should be in a state [something like this](https://github.com/kpalang/mirth-sample-plugin/tree/d0029888ca978bbb9b8dabdd04446a8b408510c9).
+
+---
+
 ## ? - Signing and publishing
 Mirth Connect plugins need to be signed with a code-signing certificate. This certificate can be either self-signed or bought from a proper certificate authority. There have been some debate over which certificate authorities are trusted by Mirth. I've had success with [DigiCert](https://www.digicert.com/).
 
