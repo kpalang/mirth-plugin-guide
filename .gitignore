@@ -1,0 +1,4 @@
+pgdata/
+appdata/
+extensions/
+Makefile
