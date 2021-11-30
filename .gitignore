@@ -2,3 +2,4 @@ pgdata/
 appdata/
 extensions/
 Makefile
+.idea
