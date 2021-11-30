@@ -64,6 +64,8 @@ So... `git clone git@github.com:nextgenhealthcare/connect.git`. Now open the res
 
 Another good idea is to clone my [Mirth sample plugin](https://github.com/kpalang/mirth-sample-plugin) to get a general idea of the plugin file tree. Also we will be using Maven to build the project, so that's something to look up if you haven't already.
 
+Using the "Administrator Launcher" for Mirth Connect is a good idea in general but is specifically useful for plugin development. The launcher helps a plugin developer by managing cache and also allowing for self-signed plugin code to be executed. It is free, but closed-source and is available from the [NextGen Downloads Page](https://www.nextgen.com/products-and-services/mirth-connect-downloads)
+
 And finally I've made a [Docker image](https://hub.docker.com/r/kpalang/connect/) that includes a JVM option that enables remote debugging. This will come handy later, but now I'm going to set up a Docker container. The container will be useful for quick runs to check if the plugin works or not. It's also all sandboxed so you pretty much need one command to run it and another one to stop it. I've included a sample [docker-compose.yaml](/docker-compose.yaml).
 
 ---
