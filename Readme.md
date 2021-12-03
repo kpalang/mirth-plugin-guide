@@ -725,7 +725,7 @@ __Windows__:
 1. Find your launcher shortcut location, it's usually at `C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Mirth Connect Administrator Launcher\`
 1. Create a copy of that shortcut. Ctrl+C and then Ctrl+V.
 1. Right-click on your new shortcut and choose properties
-1. Now append `-k` to the `Target` field in the `Shortcut` tab
+1. Now append `-k` to the `Target` field in the `Shortcut` tab</br>
 ![Properties](/images/shortcut_properties.png)
 1. Click save
 
