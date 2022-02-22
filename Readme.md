@@ -142,7 +142,7 @@ to manually extract them from Mirth itself.
 <repositories>
     <repository>
         <id>nexus</id>
-        <url>https://nexus.kaurpalang.com/repository/maven-public/</url>
+        <url>https://maven.kaurpalang.com/repository/maven-public/</url>
     </repository>
 </repositories>
 
