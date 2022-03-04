@@ -751,7 +751,7 @@ Mirth Connect plugins need to be signed with a code-signing certificate. This ce
 ### Self-signed certificate
 We are going to use a self-signed certificate to sign our plugin because official certificates cost a couple hundred dollars. But fret not, for a self-signed works for our current purpose of getting the plugin running on Mirth. Selfsigned certificates can be generated with the following command:
 ```
-keytool -genkey -keyalg RSA -keysize 2048 -alias selfsigned -keystore keystore.jks -storepass storepass -validity 360 
+keytool -genkey -keyalg RSA -keysize 2048 -alias selfsigned -keystore keystore.jks -storepass storepass -validity 360 -storetype JKS
 ```
 Let's go over what some of this means:
 - RSA - This is the algorithm our certificate is going to use
@@ -760,6 +760,7 @@ Let's go over what some of this means:
 - keystore.jks - The name of the generate keystore file.
 - storepass - The password for our keystore. __*Password for the certificate itself will come later*__
 - 360 - Validity of our certificate in days
+- JKS - Our certificate has to be in the proprietary JKS format
 
 After entering the previous command, you'll be greeted with the following view:
 ```
@@ -777,6 +778,13 @@ What is the two-letter country code for this unit?
   [Unknown]:  US
 Is CN=John Doe, OU=IT Department, O=Big Bucks Corp., L=New York, ST=Texas, C=US correct?
   [no]:  yes
+
+Enter key password for <selfsigned>
+        (RETURN if same as keystore password):  
+Re-enter new password: 
+
+Warning:
+The JKS keystore uses a proprietary format. It is recommended to migrate to PKCS12 which is an industry standard format using "keytool -importkeystore -srckeystore keystore.jks -destkeystore keystore.jks -deststoretype pkcs12".
 ```
 
 I've gone ahead and filled this out with some informations already :) </br>
