@@ -748,4 +748,36 @@ Also the state of you code should be similar to [this commit](https://github.com
 ## ? - Signing and publishing
 Mirth Connect plugins need to be signed with a code-signing certificate. This certificate can be either self-signed or bought from a proper certificate authority. There have been some debate over which certificate authorities are trusted by Mirth. I've had success with [DigiCert](https://www.digicert.com/).
 
-We are going to use a self-signed certificate to sign our plugin because official certificates cost a couple hundred dollars. But fret not, for a self-signed works for our current purpose of getting the plugin running on Mirth.
+### Self-signed certificate
+We are going to use a self-signed certificate to sign our plugin because official certificates cost a couple hundred dollars. But fret not, for a self-signed works for our current purpose of getting the plugin running on Mirth. Selfsigned certificates can be generated with the following command:
+```
+keytool -genkey -keyalg RSA -keysize 2048 -alias selfsigned -keystore keystore.jks -storepass storepass -validity 360 
+```
+Let's go over what some of this means:
+- RSA - This is the algorithm our certificate is going to use
+- 2048 - Size of our certificate in bits
+- selfsigned - This is the name of our certificate. You can use whatever you want here, but make sure to replace other occurrences aswell then.
+- keystore.jks - The name of the generate keystore file.
+- storepass - The password for our keystore. __*Password for the certificate itself will come later*__
+- 360 - Validity of our certificate in days
+
+After entering the previous command, you'll be greeted with the following view:
+```
+What is your first and last name?
+  [Unknown]:  John Doe
+What is the name of your organizational unit?
+  [Unknown]:  IT Department
+What is the name of your organization?
+  [Unknown]:  Big Bucks Corp.
+What is the name of your City or Locality?
+  [Unknown]:  New York
+What is the name of your State or Province?
+  [Unknown]:  Texas
+What is the two-letter country code for this unit?
+  [Unknown]:  US
+Is CN=John Doe, OU=IT Department, O=Big Bucks Corp., L=New York, ST=Texas, C=US correct?
+  [no]:  yes
+```
+
+I've gone ahead and filled this out with some informations already :) </br>
+After this all you have to do is copy the resulting keystore into the [`certificate`](https://github.com/kpalang/mirth-sample-plugin/tree/main/certificate) directory in the plugin's root.
