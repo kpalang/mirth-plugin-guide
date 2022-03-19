@@ -788,4 +788,4 @@ The JKS keystore uses a proprietary format. It is recommended to migrate to PKCS
 ```
 
 I've gone ahead and filled this out with some informations already :) </br>
-After this all you have to do is copy the resulting keystore into the [`certificate`](https://github.com/kpalang/mirth-sample-plugin/tree/main/certificate) directory in the plugin's root.
+After this all you have to do is copy the resulting keystore into the [`certificate`](https://github.com/kpalang/mirth-sample-plugin/tree/main/certificate) directory in the plugin's root and if needed, update the passwords [for JarSigner](https://github.com/kpalang/mirth-sample-plugin/blob/main/pom.xml#L121-L122).
