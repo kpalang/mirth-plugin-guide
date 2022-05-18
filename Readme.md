@@ -719,7 +719,9 @@ This is what you need. Now is the time to
 #### Pay attention here!
 
 If you start you Launcher like you usually do, though the shortcut the installation created, you're not going to be able to log in to Mirth. This is because our plugin is signed using a self-signed certificate and this is something Mirth Administrator Launcher explicitly distrusts in a production environment.</br>
-To get around this limitation, we're going to have to start our launcher with a `-k` flag. To do that follow these steps:
+To get around this limitation, we're going to have to start our launcher with a `-k` flag.
+
+> The `-k` or `--allow-self-signed` flag is a security risk since it allows for unsigned and potentially malicious code to be run in your environment. Use this with caution and preferrably only for development/testing!
 
 __Windows__:
 1. Find your launcher shortcut location, it's usually at `C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Mirth Connect Administrator Launcher\`
@@ -731,6 +733,34 @@ __Windows__:
 
 __MacOS__:
 1. Step 1
+
+__Linux__:
+1. You're on Linux. You figure it out :)
+
+The full list of flags can be found when running `launcher --help`, but I'll list the options for launche version 1.2.0 here:
+```
+usage: launch
+ -a,--address <arg>            The address to connect to Mirth Connect
+                               with.
+ -d,--allow-incorrect-digest   Allows JARs that fail digest verification.
+                               This should only be used for
+                               development/testing purposes.
+ -h,--help                     Prints this help message.
+ -j,--java-console             If specified, the Administrator will be
+                               launched with a Java console dialog.
+ -k,--allow-self-signed        Allows JARs signed with self-signed
+                               certificates to be verified. This should
+                               only be used for development/testing
+                               purposes.
+ -m,--max-heap-size <arg>      The client-side max heap size to use when
+                               launching the Administrator.
+ -o,--stay-open                If specified, the launcher will stay open
+                               after launching the Administrator.
+ -v,--use-same-jvm             If specified, the Administrator will be
+                               launched using the same JVM as the
+                               launcher. Useful when you don't have access
+                               to a launcher script.
+```
 
 It's also a really good idea to enable Java console. The Java Console is where the logs from the Mirth client are logged.</br>
 ![Enabling Java console from Mirth launcher](/images/launcher_template.png)
