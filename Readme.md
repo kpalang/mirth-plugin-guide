@@ -721,7 +721,7 @@ This is what you need. Now is the time to
 If you start you Launcher like you usually do, though the shortcut the installation created, you're not going to be able to log in to Mirth. This is because our plugin is signed using a self-signed certificate and this is something Mirth Administrator Launcher explicitly distrusts in a production environment.</br>
 To get around this limitation, we're going to have to start our launcher with a `-k` flag.
 
-> **The `-k` or `--allow-self-signed` flag is a security risk since it allows for unsigned and potentially malicious code to be run in your environment. Use this with caution and preferrably only for development/testing!**
+> **Only use this for developing self-signed plugins. Get a real code signing certificate before deploying to production!**
 
 __Windows__:
 1. Find your launcher shortcut location, it's usually at `C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Mirth Connect Administrator Launcher\`
