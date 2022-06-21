@@ -830,6 +830,22 @@ Once you have your basic build working, now the real work starts. You actuall ha
 
 ### Learn From the Community
 
+__Community Plugin Developers__
+
+Several engineers have published open source plugins:
+* https://github.com/kpalang/
+* https://github.com/kayyagari/
+* https://github.com/tonygermano/
+* https://github.com/ChristopherSchultz/
+
+Go look at their repos and see how they implemented their plugins. 
+
+__Mirth Connect__
+
+Asking about plugins is on topic on the main MC Github https://github.com/nextgenhealthcare/connect/discussions and the MC Forums https://forums.mirthproject.io/.
+
+MC Slack https://mirthconnect.herokuapp.com/ has the `#plugin-development` channel. Many of the plugin developers listed previously hang out there.
+
 ### Use the Java debugger
 
 MC works like any other Java application with regards to debugging. The only real quirk is that the MC Client uses Java WebStart. The debugging steps here are a quick reference for Mirth Connect but are common for any Java WebStart application or Java application.
@@ -855,3 +871,5 @@ __MC Client__
 2. Your code will then need to use `System.out.printlin` to log information out to the Java WebStart console. Mirth Connect does not run the client wiht a logger by default so you have to use `System.out` instead.
 
 __MC Server__
+
+1. The MC server app uses Log4J, just instantiate a logger like normal and log it out!
