@@ -51,6 +51,8 @@ _To be fleshed out_
 
 ## Requirements
 - Java JDK - I suggest version 1.8 because the UI part of Mirth uses that. I'm going to use a [Temurin build](https://adoptium.net/index.html?variant=openjdk8&jvmVariant=hotspot). You can get installation instructions for your OS version at the bottom of that page. Since I'm using Linux I'm going to install that from my package manager.
+ - Any JDK should work, the key is to get a JDK that comes with `JavaFX`
+ - If you get an error like `this version of the Java Runtime only recognizes class file versions up to 52.0` this is resolved by updating to a newer JDK
 - Maven - You can download a version of Maven [here](https://maven.apache.org/index.html). I'm going to use version 3.8.3.
 
 We will also be using another neat tool of mine, a [mirth-plugin-maven-plugin](https://github.com/kpalang/mirth-plugin-maven-plugin), which will save us some manual work later on. You don't have to do anything with it right now.
@@ -732,10 +734,12 @@ __Windows__:
 1. Click save
 
 __MacOS__:
-1. Step 1
+1. Open `Terminal` and use the command line. 
+1. Navigate `cd /Applications/Mirth Connect Administrator Launcher.app/Contents/java/app`
+1. Execute `java -jar mirth-client-launcher.jar -k -d`
 
 __Linux__:
-1. You're on Linux. You figure it out :)
+1. You're on Linux. You figure it out :) Linux should be very similar to MacOS. Find the install path to the JAR, run the jar with the `-k` flag.
 
 The full list of flags can be found when running `launcher --help`, but I'll list the options for launche version 1.2.0 here:
 ```
@@ -819,3 +823,35 @@ The JKS keystore uses a proprietary format. It is recommended to migrate to PKCS
 
 I've gone ahead and filled this out with some informations already :) </br>
 After this all you have to do is copy the resulting keystore into the [`certificate`](https://github.com/kpalang/mirth-sample-plugin/tree/main/certificate) directory in the plugin's root and if needed, update the passwords [for JarSigner](https://github.com/kpalang/mirth-sample-plugin/blob/main/pom.xml#L121-L122).
+
+## Debugging and Best Practices
+
+Once you have your basic build working, now the real work starts. You actuall have to write and implement your plugin.
+
+### Learn From the Community
+
+### Use the Java debugger
+
+MC works like any other Java application with regards to debugging. The only real quirk is that the MC Client uses Java WebStart. The debugging steps here are a quick reference for Mirth Connect but are common for any Java WebStart application or Java application.
+
+__MC Client__
+
+1. Acquire the client JNLP, `wget http://yourserver:8080/webstart.jnlp` . This will download the JNLP from your server to the current directory
+1. Run with debugging enabled using `javaws -wait -Xnosplash -verbose -J-Xdebug -J-Xnoagent -J-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 webstart.jnlp`
+1. Connect your IDE Java debugger using port `5005`
+
+__MC Server__
+
+1. Since you're writing plugins, you can use a plain installation of MC. You can then run it with the debugger enabled and hit breakpoints within either core MC or your plugin code.
+1. Alter `mcserver.vmoptions` to include `-J-Xdebug -J-Xnoagent -J-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5006 webstart.jnlp`
+1. Launch MC using `mcserver`. Note that we are using `mcserver` and not `mcservice`, debugging MC when its running as a background service adds challenges you don't need for development
+
+### When in doubt log it out!
+
+__MC Client__
+1. When launching the MC Client use one of:
+ - Mirth Connect Admin Launcher with the "Show Console" option selected
+ - `javaws`
+2. Your code will then need to use `System.out.printlin` to log information out to the Java WebStart console. Mirth Connect does not run the client wiht a logger by default so you have to use `System.out` instead.
+
+__MC Server__
