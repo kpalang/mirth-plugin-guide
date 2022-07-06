@@ -375,13 +375,15 @@ Lets go over this one-by-one:
 This annotation sets parent path of our endpoints:</br>
 `https://localhost:8443/api/myplugin/`
 
---</br>
-`@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })`</br>
-This annotation tells Swagger our endpoint can consume either XML or JSON inputs</br>
+---
 
---</br>
+`@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })`</br>
+This annotation tells Swagger our endpoint can consume both XML or JSON inputs</br>
+
+---
+
 `@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })`</br>
-This one tells Swagger out endpoint produces either XML or JSON</br>
+This one tells Swagger our endpoint produces either XML or JSON</br>
 
 #### Not Swagger stuff
 
@@ -390,14 +392,18 @@ This line tells mirth-plugin-maven-plugin to include this class in our plugin's 
 ```xml
 <apiProvider name="com.kaurpalang.mirthpluginsample.shared.interfaces.MyServletInterface" type="SERVLET_INTERFACE"/>
 ```
---</br>
+---
+
 `public interface MyServletInterface extends BaseServletInterface`</br>
 BaseServletInterface is Mirth's BaseServletInterface... interface... It creates a foundation to base our servlet interfaces on...
 
---</br>
+---
+
+</br>
 More Swagger stuff we touched just above
 
---</br>
+---
+
 ```java
 @ApiResponse(
   responseCode = "200",
@@ -409,7 +415,8 @@ More Swagger stuff we touched just above
 ```
 This part tells Swagger to use our POJO class as on output example. Also, automagic serialization ;) I'll show you the picture in a second.
 
---</br>
+---
+
 ```java
 @MirthOperation(
     name = "getSomething",
@@ -423,7 +430,8 @@ And secondly, this creates event messages in Events view in Mirth Administrator.
 
 ![Events view with our custom event](/images/admin_event.png)
 
---</br>
+---
+
 ```java
 MyInfoObject getSomething(
             @Param("identifier") @Parameter(description = "The identifier of our important information to retrieve.", required = true) @QueryParam("identifier") String identifier)
@@ -608,7 +616,7 @@ public class MySettingsPlugin extends SettingsPanelPlugin {
 ```
 
 Don't worry about the missing MainSettingsPanel class, we will create it right away.</br>
-Now MigLayout is the part where our code get some mass into it. I'm not too familiar with building layouts in Java, but the following should suffice.
+Now MigLayout is the part where our code gets some mass into it. I'm not too familiar with building layouts in Java, but the following should suffice.
 
 ```java
 package com.kaurpalang.mirthpluginsample.client.panel;
@@ -741,7 +749,7 @@ __MacOS__:
 __Linux__:
 1. You're on Linux. You figure it out :) Linux should be very similar to MacOS. Find the install path to the JAR, run the jar with the `-k` flag.
 
-The full list of flags can be found when running `launcher --help`, but I'll list the options for launche version 1.2.0 here:
+The full list of flags can be found when running `launcher --help`, but I'll list the options for launcher version 1.2.0 here:
 ```
 usage: launch
  -a,--address <arg>            The address to connect to Mirth Connect
@@ -826,7 +834,7 @@ After this all you have to do is copy the resulting keystore into the [`certific
 
 ## Debugging and Best Practices
 
-Once you have your basic build working, now the real work starts. You actuall have to write and implement your plugin.
+Once you have your basic build working, now the real work starts. You actually have to write and implement your plugin.
 
 ### Learn From the Community
 
@@ -860,16 +868,17 @@ __MC Server__
 
 1. Since you're writing plugins, you can use a plain installation of MC. You can then run it with the debugger enabled and hit breakpoints within either core MC or your plugin code.
 1. Alter `mcserver.vmoptions` to include `-J-Xdebug -J-Xnoagent -J-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5006 webstart.jnlp`
-1. Launch MC using `mcserver`. Note that we are using `mcserver` and not `mcservice`, debugging MC when its running as a background service adds challenges you don't need for development
+1. Launch MC using `mcserver`. Note that we are using `mcserver` and not `mcservice`, debugging MC when its running as a background service adds challenges you don't need for development.
 
 ### When in doubt log it out!
 
 __MC Client__
 1. When launching the MC Client use one of:
- - Mirth Connect Admin Launcher with the "Show Console" option selected
- - `javaws`
-2. Your code will then need to use `System.out.printlin` to log information out to the Java WebStart console. Mirth Connect does not run the client wiht a logger by default so you have to use `System.out` instead.
+   - Mirth Connect Admin Launcher with the "Show Console" option selected
+   - `javaws`
+2. Your code will then need to use `System.out.printlin` to log information out to the Java WebStart console. Mirth Connect does not run the client with logger by default so you have to use `System.out` instead.
 
 __MC Server__
 
 1. The MC server app uses Log4J, just instantiate a logger like normal and log it out!
+   - Since we already got Lombok, use `@Slf4J`
