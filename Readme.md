@@ -137,14 +137,14 @@ You will also see a `pom.xml` file in your project root. This is our Maven proje
 
 ```xml
 <!--
-This bit specifies a Nexus repository I'm
+This bit specifies a Maven repository I'm
 hosting for Mirth jarfiles so we don't have
 to manually extract them from Mirth itself.
 -->
 <repositories>
     <repository>
-        <id>nexus</id>
-        <url>https://maven.kaurpalang.com/repository/maven-public/</url>
+        <id>repsy</id>
+        <url>https://repo.repsy.io/mvn/kpalang/mirthconnect/</url>
     </repository>
 </repositories>
 
