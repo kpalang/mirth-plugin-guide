@@ -744,7 +744,7 @@ __Windows__:
 __MacOS__:
 1. Open `/Applications/Mirth Connect Administrator Launcher.app/Contents/Info.plist`
 1. Find the `ArgumentsArray`
-1. Add `<string>-k</string>` beteween to the `<array></array>` tags
+1. Add `<string>-k</string>` between the `<array></array>` tags
 1. Launch the Mirth Connect Administrator Launcher app normally
 
 __Linux__:
