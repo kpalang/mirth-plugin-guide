@@ -742,9 +742,10 @@ __Windows__:
 1. Click save
 
 __MacOS__:
-1. Open `Terminal` and use the command line. 
-1. Navigate `cd /Applications/Mirth Connect Administrator Launcher.app/Contents/java/app`
-1. Execute `java -jar mirth-client-launcher.jar -k -d`
+1. Open `/Applications/Mirth Connect Administrator Launcher.app/Contents/Info.plist`
+1. Find the `ArgumentsArray`
+1. Add `<string>-k</string>` between the `<array></array>` tags
+1. Launch the Mirth Connect Administrator Launcher app normally
 
 __Linux__:
 1. You're on Linux. You figure it out :) Linux should be very similar to MacOS. Find the install path to the JAR, run the jar with the `-k` flag.
