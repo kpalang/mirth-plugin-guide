@@ -51,8 +51,8 @@ _To be fleshed out_
 
 ## Requirements
 - Java JDK - I suggest version 1.8 because the UI part of Mirth uses that. I'm going to use a [Temurin build](https://adoptium.net/index.html?variant=openjdk8&jvmVariant=hotspot). You can get installation instructions for your OS version at the bottom of that page. Since I'm using Linux I'm going to install that from my package manager.
-- Any JDK should work, the key is to get a JDK that comes with `JavaFX`
-- If you get an error like `this version of the Java Runtime only recognizes class file versions up to 52.0` this is resolved by updating to a newer JDK
+  - Any JDK should work, the key is to get a JDK that comes with `JavaFX`
+  - If you get an error like `this version of the Java Runtime only recognizes class file versions up to 52.0` this is resolved by updating to a newer JDK
 - Maven - You can download a version of Maven [here](https://maven.apache.org/index.html). I'm going to use version 3.8.3.
 
 We will also be using another neat tool of mine, a [mirth-plugin-maven-plugin](https://github.com/kpalang/mirth-plugin-maven-plugin-kt), which will save us some manual work later on. You don't have to do anything with it right now.
