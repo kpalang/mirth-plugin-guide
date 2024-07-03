@@ -64,7 +64,7 @@ A fair first place would be to clone yourself a copy of [Mirth Connect](https://
 
 So... `git clone git@github.com:nextgenhealthcare/connect.git`. Now open the resulting folder up in your favorite IDE. I'm going to use [IntelliJ](https://www.jetbrains.com/idea/) cause I like that one.
 
-Another good idea is to clone my [Mirth sample plugin](https://github.com/kpalang/mirth-sample-plugin) to get a general idea of the plugin file tree. Also we will be using Maven to build the project, so that's something to look up if you haven't already.
+Another good idea is to click the "Use this template" in my [Mirth sample plugin](https://github.com/kpalang/mirth-sample-plugin) to get yourselves set up with the general file tree. Also we will be using Maven to build the project, so that's something to look up if you haven't already.
 
 Using the "Administrator Launcher" for Mirth Connect is a good idea in general but is specifically useful for plugin development. The launcher helps a plugin developer by managing cache and also allowing for self-signed plugin code to be executed. It is free, but closed-source and is available from the [NextGen Downloads Page](https://www.nextgen.com/products-and-services/mirth-connect-downloads)
 
