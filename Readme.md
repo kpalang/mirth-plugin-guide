@@ -51,11 +51,11 @@ _To be fleshed out_
 
 ## Requirements
 - Java JDK - I suggest version 1.8 because the UI part of Mirth uses that. I'm going to use a [Temurin build](https://adoptium.net/index.html?variant=openjdk8&jvmVariant=hotspot). You can get installation instructions for your OS version at the bottom of that page. Since I'm using Linux I'm going to install that from my package manager.
- - Any JDK should work, the key is to get a JDK that comes with `JavaFX`
- - If you get an error like `this version of the Java Runtime only recognizes class file versions up to 52.0` this is resolved by updating to a newer JDK
+- Any JDK should work, the key is to get a JDK that comes with `JavaFX`
+- If you get an error like `this version of the Java Runtime only recognizes class file versions up to 52.0` this is resolved by updating to a newer JDK
 - Maven - You can download a version of Maven [here](https://maven.apache.org/index.html). I'm going to use version 3.8.3.
 
-We will also be using another neat tool of mine, a [mirth-plugin-maven-plugin](https://github.com/kpalang/mirth-plugin-maven-plugin), which will save us some manual work later on. You don't have to do anything with it right now.
+We will also be using another neat tool of mine, a [mirth-plugin-maven-plugin](https://github.com/kpalang/mirth-plugin-maven-plugin-kt), which will save us some manual work later on. You don't have to do anything with it right now.
 
 ---
 
@@ -91,45 +91,34 @@ You will also see a `pom.xml` file in your project root. This is our Maven proje
 ```xml
 <properties>
     <!--
-    We're using a custom annotation processor from
-    the mirth-plugin-maven-plugin and this line
-    specifies a place where that processor stores it's inner data.
+    Here are some details about our plugin.
+    Some of these will be shown in the extensions view in Mirth Administrator.
     -->
-    <processor.aggregator.path>distribution/aggregator/aggregated.json</processor.aggregator.path>
-
-
-    <!--
-    Here are plugin details.
-
-    Some of these will be shown in
-    the extensions view in Mirth Administrator.
-    -->
-
-    <!-- this is the name of the folder
-    that gets put into mirthroot/extensions -->
-    <plugin.path>plugintest</plugin.path>
-
-    <!-- The name of your plugin -->
-    <plugin.name>Sample testing plugin</plugin.name>
-
-    <!-- Would you like to display your homepage? -->
-    <plugin.url>www.com</plugin.url>
 
     <!-- The name of the author. You, your company, anything you like really -->
-    <plugin.author>Kaur Palang</plugin.author>
-
-    <!-- What version would you like to display in Mirth Administrator -->
-    <plugin.version>15</plugin.version>
+    <mirth.plugin.author>Kaur Palang</mirth.plugin.author>
 
     <!--
     The version of Mirth your plugin is compatible with.
     This can also be a comma-separated list:
     3.10.0, 3.10.1, 3.11.0
     -->
-    <plugin.mirthVersion>3.12.0</plugin.mirthVersion>
+    <mirth.plugin.compatible_versions>4.5.0</mirth.plugin.compatible_versions>
 
-    <!-- This property sets the name of your eventual zipfile -->
-    <plugin.archive.name>sampleplugin</plugin.archive.name>
+    <!-- A short description, also shown in Mirth Connect Administrator -->
+    <mirth.plugin.description>A sample Mirth plugin to showcase my Maven plugin.</mirth.plugin.description>
+
+    <!-- The name of your plugin -->
+    <mirth.plugin.name>Sample Plugin</mirth.plugin.name>
+
+    <!-- this is the name of the folder that gets put into mirthroot/extensions -->
+    <mirth.plugin.path>sampleplugin</mirth.plugin.path>
+
+    <!-- Would you like to display your homepage? -->
+    <mirth.plugin.url>www.yourpage.com</mirth.plugin.url>
+
+    <!-- What version would you like to display in Mirth Administrator -->
+    <mirth.plugin.version>${project.version}</mirth.plugin.version>
 </properties>
 ```
 
@@ -157,6 +146,8 @@ to manually extract them from Mirth itself.
     </dependency>
 </dependencies>
 ```
+
+Now, we need to decide on our approach to signing the jar files. The [mpmp](https://github.com/
 
 The last thing we'll cover is the following. This bit makes sure our plugin get signed and sets the required parameters.
 ```xml
@@ -187,9 +178,9 @@ The last thing we'll cover is the following. This bit makes sure our plugin get 
 
 You don't have to touch anything else for now.
 
-Now let's run `mvn clean package` to make sure our plugin builds properly. You should see `distribution/target/sampleplugin.zip` pop up. Take a peek inside to get an idea of what the archive will look like. I'm not going to cover it here.
+Now let's run `./build.sh` to make sure our plugin builds properly. You should see `sampleplugin.zip` pop up in your project root. Take a peek inside to get an idea of what the archive will look like. I'm not going to cover it here.
 
-After all this initial tweaking I've come to a state as in [this commit](https://github.com/kpalang/mirth-sample-plugin/tree/d3b36ea63a893332f6e0eda5283d88f00e8dc25c) (_I modified some other stuff aswell but that's unimportant right now..._).</br> **NOTE:** Your current state may differ a bit depending on when you clone the repository.
+After all this initial tweaking I've come to a state as in [this commit](https://github.com/kpalang/mirth-sample-plugin/tree/7909312d3586c476102ae8a3e868b30acafe4646).</br> **NOTE:** Your current state may differ a bit depending on when you clone the repository.
 
 ---
 
@@ -209,7 +200,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-@ServerClass
+@MirthServerClass
 public class MyServicePlugin implements ServicePlugin {
 
     @Override
@@ -255,7 +246,7 @@ public class MyServicePlugin implements ServicePlugin {
 ```
 You'll notice in the function `getPluginPointName()`, I've referenced a `Constants` class from the `shared` module. This is so we can reference the same... _constants_, in both server- and client-side code.
 
-After editing the strings in this class, build the plugin with `mvn clean package`, install the plugin, the zip file will be in `distribution/target/` on your server and restart said server.</br>
+After editing the strings in this class, build the plugin with `./build.sh`, install the plugin, the zip file will be in the root of your project, on your server and restart said server.</br>
 If you used the container from above, your logs should look something like this:
 ```
 Found 1 custom extensions.
@@ -343,7 +334,7 @@ import javax.ws.rs.core.MediaType;
 @Tag(name = "MyPlugin operations")
 @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-@ApiProvider(type = ApiProviderType.SERVLET_INTERFACE)
+@MirthApiProvider(type = ApiProviderType.SERVLET_INTERFACE)
 public interface MyServletInterface extends BaseServletInterface {
 
     @GET
@@ -387,7 +378,7 @@ This one tells Swagger our endpoint produces either XML or JSON</br>
 
 #### Not Swagger stuff
 
-`@ApiProvider(type = ApiProviderType.SERVLET_INTERFACE)`</br>
+`@MirthApiProvider(type = ApiProviderType.SERVLET_INTERFACE)`</br>
 This line tells mirth-plugin-maven-plugin to include this class in our plugin's `plugin.xml` as the following line, which in turn tells Mirth to handle our class as a servlet interface.</br>
 ```xml
 <apiProvider name="com.kaurpalang.mirthpluginsample.shared.interfaces.MyServletInterface" type="SERVLET_INTERFACE"/>
@@ -406,12 +397,12 @@ More Swagger stuff we touched just above
 
 ```java
 @ApiResponse(
-  responseCode = "200",
-  description = "Found the information",
-  content = {
-          @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = MyInfoObject.class)),
-          @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = MyInfoObject.class))
-})
+        responseCode = "200",
+        description = "Found the information",
+        content = {
+                @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = MyInfoObject.class)),
+                @Content(mediaType = MediaType.APPLICATION_XML, schema = @Schema(implementation = MyInfoObject.class))
+        })
 ```
 This part tells Swagger to use our POJO class as on output example. Also, automagic serialization ;) I'll show you the picture in a second.
 
@@ -419,9 +410,9 @@ This part tells Swagger to use our POJO class as on output example. Also, automa
 
 ```java
 @MirthOperation(
-    name = "getSomething",
-    display = "Get important information",
-    permission = MyPermissions.GETSTH
+        name = "getSomething",
+        display = "Get important information",
+        permission = MyPermissions.GETSTH
 )
 ```
 This annotation dictates first, who can execute it. TBH I don't really know right now what the permission parameter does, but I'd guess it allows for permission control if you've got the premium User Roles plugin installed.
@@ -434,10 +425,12 @@ And secondly, this creates event messages in Events view in Mirth Administrator.
 
 ```java
 MyInfoObject getSomething(
-            @Param("identifier") @Parameter(description = "The identifier of our important information to retrieve.", required = true) @QueryParam("identifier") String identifier)
-            throws ClientException;
+        @Param("identifier")
+        @Parameter(description = "The identifier of our important information to retrieve.", required = true)
+        @QueryParam("identifier") String identifier
+) throws ClientException;
 ```
-Finally the function itself. Geez. Well it specifies what does in and what comes out of our function...
+Finally, the function itself. Geez. Well it specifies what does in and what comes out of our function...
 
 #### Grand middle finale
 If you've done everything more or less like I've done above, you should see something like this:
@@ -465,7 +458,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
 
-@ApiProvider(type = ApiProviderType.SERVER_CLASS)
+@MirthApiProvider(type = ApiProviderType.SERVER_CLASS)
 public class MyPluginServlet extends MirthServlet implements MyServletInterface {
 
     public MyPluginServlet(@Context HttpServletRequest request, @Context SecurityContext sc) {
@@ -492,7 +485,7 @@ Right. Now you should be in a state [something like this](https://github.com/kpa
 
 Right, now that we've gone over some of the behind the scenes stuff, it's time to make our plugin look sexy. ;)
 
-First, we're going to add a couple of dependencies. Namely mirth-client.jar and MigLayout</br>
+First, we're going to add a couple of dependencies. Namely, mirth-client.jar and MigLayout</br>
 I'm going add a property to our main `pom.xml` in the root of our project:
 ```xml
 <properties>
@@ -521,7 +514,7 @@ And then the two dependencies to `client/pom.xml`:
     ...
 </dependencies>
 ```
-The first dependency, `mirth-client`, contains all the stuff that Mirth has for it's UI creation. Custom Swing elements, the client-side plugin points, etc.
+The first dependency, `mirth-client`, contains all the stuff that Mirth has for its UI creation. Custom Swing elements, the client-side plugin points, etc.
 
 And MigLayout is a layout manager for Swing and SWT. _MiG Layout makes complex layouts easy and normal layouts zero-liners._ as they say themselves. I can't say much else about it...</br>
 
@@ -538,9 +531,9 @@ Now, all Mirth UI plugins are loaded in from the following list in our `plugin.x
 </clientClasses>
 ```
 
-And the way to autogenerate this definition is to add the `@ClientClass` annotation to our class.
+And the way to autogenerate this definition is to add the `@MirthClientClass` annotation to our class.
 ```Java
-@ClientClass
+@MirthClientClass
 public class MySettingsPlugin {
 }
 ```
@@ -549,7 +542,7 @@ Basically this is everything we need to get Mirth to load our class. __BUT__, th
 
 We're going to extend [SettingsPanelPlugin](plugin-types/client/SettingsPanelPlugin.md).
 ```java
-@ClientClass
+@MirthClientClass
 public class MySettingsPlugin extends SettingsPanelPlugin {
 
     public MySettingsPlugin(String name) {
@@ -591,9 +584,9 @@ The `getSettingsPanel()` function is native to the `SettingsPanelPlugin` plugin 
 The `getPluginPointName()` is already familiar from the server section. Pointname is pretty much what identifies our plugin.
 And finally, the `start()`, `stop()`, and `reset()` hooks are pretty much self-explanatory. They get called when the plugin is started, stopped, or reset.
 
-Now to get our plugin to actually start, we need to provide a settings panel. Otherwise the Admin Launcher throws a NullPointerException. To provide the settings panel, all we have to do is add a private variable and initialize it.
+Now to get our plugin to actually start, we need to provide a settings panel. Otherwise, the Admin Launcher throws a NullPointerException. To provide the settings panel, all we have to do is add a private variable and initialize it.
 ```java
-@ClientClass
+@MirthClientClass
 public class MySettingsPlugin extends SettingsPanelPlugin {
 
     private MainSettingsPanel mainSettingsPanel;
@@ -616,7 +609,7 @@ public class MySettingsPlugin extends SettingsPanelPlugin {
 ```
 
 Don't worry about the missing MainSettingsPanel class, we will create it right away.</br>
-Now MigLayout is the part where our code gets some mass into it. I'm not too familiar with building layouts in Java, but the following should suffice.
+Now, MigLayout is the part where our code gets some mass into it. I'm not too familiar with building layouts in Java, but the following should suffice.
 
 ```java
 package com.kaurpalang.mirthpluginsample.client.panel;
@@ -723,12 +716,12 @@ public class MainSettingsPanel extends AbstractSettingsPanel {
 I'm not going to cover building layouts in this guide.</br>
 This is what you need. Now is the time to
 1. build our plugin again using `mvn clean package` command
-1. install the zip archive at `distribution/target`
-1. restart Mirth
+2. install the zip archive at the root of your project
+3. restart Mirth
 
 #### Pay attention here!
 
-If you start you Launcher like you usually do, though the shortcut the installation created, you're not going to be able to log in to Mirth. This is because our plugin is signed using a self-signed certificate and this is something Mirth Administrator Launcher explicitly distrusts in a production environment.</br>
+If you start your Launcher like you usually do, through the shortcut the installation created, you're not going to be able to log in to Mirth. This is because our plugin is signed using a self-signed certificate and this is something Mirth Administrator Launcher explicitly distrusts in a production environment.</br>
 To get around this limitation, we're going to have to start our launcher with a `-k` flag.
 
 > **Only use this for developing self-signed plugins. Get a real code signing certificate before deploying to production!**
@@ -738,16 +731,16 @@ __Windows__:
 1. Create a copy of that shortcut. Ctrl+C and then Ctrl+V.
 1. Right-click on your new shortcut and choose properties
 1. Now append `-k` to the `Target` field in the `Shortcut` tab</br>
-![Properties](/images/shortcut_properties.png)
+   ![Properties](/images/shortcut_properties.png)
 1. Click save
 
 __MacOS__:
-1. Open `Terminal` and use the command line. 
+1. Open `Terminal` and use the command line.
 1. Navigate `cd /Applications/Mirth Connect Administrator Launcher.app/Contents/java/app`
 1. Execute `java -jar mirth-client-launcher.jar -k -d`
 
 __Linux__:
-1. You're on Linux. You figure it out :) Linux should be very similar to MacOS. Find the install path to the JAR, run the jar with the `-k` flag.
+1. You're on Linux. You figure it out :) Linux should be very similar to MacOS. Find the installation path to the JAR, run the jar with the `-k` flag.
 
 The full list of flags can be found when running `launcher --help`, but I'll list the options for launcher version 1.2.0 here:
 ```
@@ -783,7 +776,7 @@ Now if you click `Launch` you will be greeted with a window asking if you trust 
 After logging in, you should be greeted with an image such as this:</br>
 ![Mirth Admin settings with Log window](/images/admin_with_console.png)
 
-Also the state of you code should be similar to [this commit](https://github.com/kpalang/mirth-sample-plugin/tree/f2b3251a8cb48e151bf0d3210ce163c31151fcd8).
+Also, the state of your code should be similar to [this commit](https://github.com/kpalang/mirth-sample-plugin/tree/f2b3251a8cb48e151bf0d3210ce163c31151fcd8).
 
 ---
 
@@ -791,7 +784,7 @@ Also the state of you code should be similar to [this commit](https://github.com
 Mirth Connect plugins need to be signed with a code-signing certificate. This certificate can be either self-signed or bought from a proper certificate authority. There have been some debate over which certificate authorities are trusted by Mirth. I've had success with [DigiCert](https://www.digicert.com/).
 
 ### Self-signed certificate
-We are going to use a self-signed certificate to sign our plugin because official certificates cost a couple hundred dollars. But fret not, for a self-signed works for our current purpose of getting the plugin running on Mirth. Selfsigned certificates can be generated with the following command:
+We are going to use a self-signed certificate to sign our plugin because official certificates cost a couple of hundred dollars. But fret not, for a self-signed works for our current purpose of getting the plugin running on Mirth. Self-signed certificates can be generated with the following command:
 ```
 keytool -genkey -keyalg RSA -keysize 2048 -alias selfsigned -keystore keystore.jks -storepass storepass -validity 360 -storetype JKS
 ```
@@ -846,17 +839,17 @@ Several engineers have published open source plugins:
 * https://github.com/tonygermano/
 * https://github.com/ChristopherSchultz/
 
-Go look at their repos and see how they implemented their plugins. 
+Go look at their repos and see how they implemented their plugins.
 
 __Mirth Connect__
 
-Asking about plugins is on topic on the main MC Github https://github.com/nextgenhealthcare/connect/discussions and the MC Forums https://forums.mirthproject.io/.
+Asking about plugins is on topic on the main [Mirth Connect GitHub repository](https://github.com/nextgenhealthcare/connect/discussions) and the [Mirth Connect Forums](https://forums.mirthproject.io/).
 
-MC Slack https://mirthconnect.herokuapp.com/ has the `#plugin-development` channel. Many of the plugin developers listed previously hang out there.
+[Mirth Connect Slack](https://mirthconnect.herokuapp.com/) has the `#plugin-development` channel. Many of the plugin developers listed previously hang out there.
 
 ### Use the Java debugger
 
-MC works like any other Java application with regards to debugging. The only real quirk is that the MC Client uses Java WebStart. The debugging steps here are a quick reference for Mirth Connect but are common for any Java WebStart application or Java application.
+Mirth works like any other Java application with regards to debugging. The only real quirk is that the Mirth client uses Java WebStart. The debugging steps here are a quick reference for Mirth Connect but are common for any Java WebStart application or Java application.
 
 __MC Client__
 
@@ -866,19 +859,19 @@ __MC Client__
 
 __MC Server__
 
-1. Since you're writing plugins, you can use a plain installation of MC. You can then run it with the debugger enabled and hit breakpoints within either core MC or your plugin code.
+1. Since you're writing plugins, you can use a plain installation of Mirth. You can then run it with the debugger enabled and hit breakpoints within either core Mirth or your plugin code.
 1. Alter `mcserver.vmoptions` to include `-J-Xdebug -J-Xnoagent -J-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5006 webstart.jnlp`
-1. Launch MC using `mcserver`. Note that we are using `mcserver` and not `mcservice`, debugging MC when its running as a background service adds challenges you don't need for development.
+1. Launch Mirth using `mcserver`. Note that we are using `mcserver` and not `mcservice`, debugging Mirth when its running as a background service adds challenges you don't need for development.
 
 ### When in doubt log it out!
 
-__MC Client__
-1. When launching the MC Client use one of:
-   - Mirth Connect Admin Launcher with the "Show Console" option selected
-   - `javaws`
-2. Your code will then need to use `System.out.printlin` to log information out to the Java WebStart console. Mirth Connect does not run the client with logger by default so you have to use `System.out` instead.
+__Mirth Connect Client__
+1. When launching the Mirth Client use one of:
+    - Mirth Connect Admin Launcher with the "Show Console" option selected
+    - `javaws`
+2. Your code will then need to use `System.out.println()` to log information out to the Java WebStart console. Mirth Connect does not run the client with logger by default, so you have to use `System.out` instead.
 
-__MC Server__
+__Mirth Connect Server__
 
-1. The MC server app uses Log4J, just instantiate a logger like normal and log it out!
-   - Since we already got Lombok, use `@Slf4J`
+1. The Mirth server app uses Log4J, just instantiate a logger like normal and log it out!
+    - Since we already got Lombok, use `@Slf4J`
